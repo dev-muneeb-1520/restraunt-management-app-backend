@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -16,10 +15,18 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
+  profilePictureUrl String?
   username String @unique
   email String @unique
   password String 
-  role String //admin manager or staff
+  role Role //admin manager or staff
+  refreshToken String? @db.Text
   createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  STAFF
 }
 

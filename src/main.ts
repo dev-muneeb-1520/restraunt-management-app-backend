@@ -11,7 +11,10 @@ async function bootstrap() {
       "This is the backend service for a Restaurant Management System developed using NestJS, Prisma ORM, and PostgreSQL. It provides secure and modular REST APIs to manage various aspects of a restaurant's operations",
     )
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'JWT-auth',
+    ) //JWT config in swagger
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
