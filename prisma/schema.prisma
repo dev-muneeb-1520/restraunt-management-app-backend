@@ -28,5 +28,6 @@ enum Role {
   ADMIN
   MANAGER
   STAFF
+  CHEF
 }
 
