@@ -52,6 +52,7 @@ export class AuthController {
   })
   @ApiBearerAuth('JWT-auth') //this tells the swagger to include the token
   @ApiOperation({ summary: 'Register a new user (ADMIN only)' })
+  @ApiBody({ type: RegisterDto })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
   @ApiResponse({ status: 409, description: 'User already exists' })
   @ApiResponse({ status: 403, description: 'Forbidden: Only admins allowed' })
@@ -64,6 +65,7 @@ export class AuthController {
 
   @Post('login')
   @ApiOperation({ summary: 'Authenticate user and return JWT tokens' })
+  @ApiBody({ type: LoginDto })
   @ApiResponse({ status: 200, description: 'Login successful, tokens issued' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   async login(@Body() loginDto: LoginDto) {
@@ -71,6 +73,7 @@ export class AuthController {
   }
 
   @Post('refresh-token')
+  @ApiBody({ type: RefreshTokenDto })
   @ApiOperation({ summary: 'Refresh access and refresh tokens' })
   @ApiResponse({ status: 200, description: 'Tokens refreshed successfully' })
   @ApiResponse({ status: 401, description: 'Invalid or expired refresh token' })

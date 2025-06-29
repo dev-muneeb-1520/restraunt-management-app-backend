@@ -10,11 +10,12 @@ import { Role } from '@prisma/client';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class RegisterDto {
-  @ApiPropertyOptional({
-    description: 'URL of the profile picture',
-    example: 'https://res.cloudinary.com/your-cloud/image/upload/profile.jpg',
+  @ApiProperty({
+    description: 'Profile picture file',
+    type: 'string',
+    format: 'binary',
+    required: false,
   })
-  @ApiProperty({ type: 'string', format: 'binary', required: false })
   @IsOptional()
   profilePicture?: any;
 
@@ -51,7 +52,7 @@ export class RegisterDto {
     example: Role.STAFF,
   })
   @IsEnum(Role, {
-    message: 'Role must be one of the following: ADMIN, MANAGER, STAFF.',
+    message: 'Role must be one of the following: ADMIN, MANAGER, STAFF, CHEF.',
   })
   role: Role;
 }
