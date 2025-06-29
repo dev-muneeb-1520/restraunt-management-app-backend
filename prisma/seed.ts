@@ -12,7 +12,7 @@
 //       username: 'superadmin',
 //       password: hashedPassword,
 //       role: 'ADMIN',
-//       profilePictureUrl: '',
+//       profilePicture: "",
 //     },
 //   });
 //   console.log('Admin created successfully');

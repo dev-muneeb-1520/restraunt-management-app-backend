@@ -13,6 +13,7 @@ import { generateTokens } from './helpers/generate.jwt.tokens';
 import { ConfigService } from '@nestjs/config';
 import { verifyJwtToken } from './helpers/verify.jwt.token';
 import { RefreshTokenDto } from './dto/refresh.token.dto';
+import { CloudinaryService } from 'src/common/cloudinary/cloudinary.service';
 
 @Injectable()
 export class AuthService {
@@ -20,20 +21,23 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private cloudinaryService: CloudinaryService,
   ) {}
 
   //register user only admins can do
-  async register(registerDto: RegisterDto) {
-    const { profilePictureUrl, username, email, password, role } = registerDto;
+  async register(registerDto: RegisterDto, file?: Express.Multer.File) {
+    const { username, email, password, role } = registerDto;
 
     //check if the user exists
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email },
+    const existingUser = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ email }, { username }],
+      },
     });
 
     if (existingUser) {
       throw new ConflictException(
-        'User already exists! Please try with a different email',
+        'User already exists! Please try with a different email or username',
       );
     }
 
@@ -41,14 +45,27 @@ export class AuthService {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    let profilePictureMeta: any = null;
+
+    if (file) {
+      const uploaded = await this.cloudinaryService.uploadFile(file);
+      profilePictureMeta = {
+        originalName: file.originalname,
+        mimeType: file.mimetype,
+        size: file.size,
+        publicId: uploaded.public_id,
+        secure_url: uploaded.secure_url,
+      };
+    }
+
     const newlyCreatedUser = await this.prisma.user.create({
       data: {
-        profilePictureUrl: profilePictureUrl || '',
         username,
         email,
         password: hashedPassword,
         role,
         refreshToken: '',
+        profilePicture: profilePictureMeta,
       },
     });
 
@@ -75,13 +92,15 @@ export class AuthService {
       throw new UnauthorizedException('Invalid Cradentials! Please try again');
     }
 
+    const profilePicture = user.profilePicture as ProfilePictureType;
+
     //creating the payload
     const payload: AuthPayload = {
       sub: user.id,
       email: user.email,
       username: user.username,
       role: user.role,
-      profilePictureUrl: user.profilePictureUrl,
+      profilePictureUrl: profilePicture?.secure_url || null,
     };
 
     const tokens = await generateTokens(
@@ -117,12 +136,14 @@ export class AuthService {
         throw new UnauthorizedException('Access denied');
       }
 
+      const profilePicture = user.profilePicture as ProfilePictureType;
+
       const newPayload: AuthPayload = {
         sub: user.id,
         email: user.email,
         username: user.username,
         role: user.role,
-        profilePictureUrl: user.profilePictureUrl,
+        profilePictureUrl: profilePicture?.secure_url || null,
       };
 
       const tokens = await generateTokens(

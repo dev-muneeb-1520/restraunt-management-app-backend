@@ -14,9 +14,9 @@ export class RegisterDto {
     description: 'URL of the profile picture',
     example: 'https://res.cloudinary.com/your-cloud/image/upload/profile.jpg',
   })
-  @IsString({ message: 'Profile picture URL must be a string.' })
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
   @IsOptional()
-  profilePictureUrl: string;
+  profilePicture?: any;
 
   @ApiProperty({
     description: 'Username of the user',
