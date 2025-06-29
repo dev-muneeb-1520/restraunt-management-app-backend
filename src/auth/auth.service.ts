@@ -8,12 +8,13 @@ import { PrismaService } from 'src/common/prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
-import { AuthPayload } from './interfaces/auth.payload.interface';
-import { generateTokens } from './helpers/generate.jwt.tokens';
+import { AuthPayload } from '../common/interfaces/auth.payload.interface';
+import { generateTokens } from '../common/helpers/generate.jwt.tokens';
 import { ConfigService } from '@nestjs/config';
-import { verifyJwtToken } from './helpers/verify.jwt.token';
+import { verifyJwtToken } from '../common/helpers/verify.jwt.token';
 import { RefreshTokenDto } from './dto/refresh.token.dto';
 import { CloudinaryService } from 'src/common/cloudinary/cloudinary.service';
+import { ProfilePictureType } from 'src/common/types/profile.picture.type';
 
 @Injectable()
 export class AuthService {

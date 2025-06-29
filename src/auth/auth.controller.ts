@@ -11,7 +11,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh.token.dto';
 import { GetUser } from './decorators/get.user.decorator';
-import { AuthPayload } from './interfaces/auth.payload.interface';
+import { AuthPayload } from '../common/interfaces/auth.payload.interface';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorator';
@@ -35,21 +35,6 @@ export class AuthController {
   @Post('register')
   @UseInterceptors(FileInterceptor('profilePicture'))
   @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        profilePicture: {
-          type: 'string',
-          format: 'binary',
-        },
-        username: { type: 'string' },
-        email: { type: 'string' },
-        password: { type: 'string' },
-        role: { type: 'string', enum: ['ADMIN', 'MANAGER', 'STAFF', 'CHEF'] },
-      },
-    },
-  })
   @ApiBearerAuth('JWT-auth') //this tells the swagger to include the token
   @ApiOperation({ summary: 'Register a new user (ADMIN only)' })
   @ApiBody({ type: RegisterDto })

@@ -1,4 +1,4 @@
-type ProfilePictureType = {
+export type ProfilePictureType = {
   originalName: string;
   mimeType: string;
   size: number;
